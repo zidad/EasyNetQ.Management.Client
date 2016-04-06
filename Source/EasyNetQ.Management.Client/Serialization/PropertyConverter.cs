@@ -9,7 +9,57 @@ namespace EasyNetQ.Management.Client.Serialization
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotImplementedException();
+            writer.WriteStartObject();
+            var prop = value as Properties;
+            if (prop != null)
+            {
+                foreach (var currObj in prop)
+                {
+                    switch (currObj.Key)
+                    {
+                        case "content_type":
+                        case "content_encoding":
+                        case "correlation_id":
+                        case "reply_to":
+                        case "expiration":
+                        case "message_id":
+                        case "type":
+                        case "user_id":
+                        case "app_id":
+                        case "cluster_id":
+                            writer.WritePropertyName(currObj.Key);
+                            writer.WriteValue(currObj.Value);
+                            break;
+                        case "priority":
+                        case "timestamp":
+                        case "delivery_mode":
+                            int val;
+                            if (Int32.TryParse(currObj.Value, out val))
+                            {
+                                writer.WritePropertyName(currObj.Key);
+                                writer.WriteValue(val);
+                            }
+                            break;
+                        case "headers":
+                            continue;
+                        default:
+                            throw new Exception("unsupported property: " + currObj.Key );
+                    }
+                }
+                if (prop.Headers.Count > 0)
+                {
+                    writer.WritePropertyName("headers");
+                    writer.WriteStartObject();
+                    foreach (var currObj in prop.Headers)
+                    {
+                        writer.WritePropertyName(currObj.Key);
+                        writer.WriteValue(currObj.Value);
+                    }
+
+                    writer.WriteEndObject();
+                }
+            }
+            writer.WriteEndObject();
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

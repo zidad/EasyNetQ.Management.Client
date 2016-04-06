@@ -115,6 +115,12 @@
   <ItemGroup>
     <None Include="EasyNetQ.Management.Client.nuspec" />
     <None Include="packages.config" />
+    <None Include="EasyNetQ.Management.Client.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
